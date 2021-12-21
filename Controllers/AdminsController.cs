@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using XMUer.Authorization;
 using XMUer.Models;
+using XMUer.Utility;
 
 namespace XMUer.Controllers
 {
@@ -19,7 +21,42 @@ namespace XMUer.Controllers
         {
             _context = context;
         }
-
+        //管理员登录
+        [HttpGet("Login")]
+        public async Task<ActionResult<APIResult>> Login(string id, string password)
+        {
+            String jwtstr;
+            String token;
+            var admin = await _context.Admins.FindAsync(id);
+            int code;
+            Boolean result;
+            String msg;
+            if (admin == null)
+            {
+                code = 404;
+                result = false;
+                msg = "用户不存在";
+                return APIResultHelper.Success(code, new { result }, msg);
+            }
+            password = MD5Helper.MD5Encryption(password);
+            if (password == admin.Password)
+            {
+                code = 200;
+                result = true;
+                msg = "登录成功";
+                TokenModel tokenModel = new TokenModel { Uid = id, Role = "Admin" };
+                jwtstr = JwtHelper.IssueJwt(tokenModel);
+                token = jwtstr;
+                return APIResultHelper.Success(code, new { token, result }, msg);
+            }
+            else
+            {
+                code = 405;
+                result = false;
+                msg = "密码错误";
+                return APIResultHelper.Success(code, new { result }, msg);
+            }
+        }
         // GET: api/Admins
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
