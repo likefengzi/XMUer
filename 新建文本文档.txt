@@ -1,0 +1,12 @@
+Scaffold-DbContext "Data Source=122.9.40.20;Initial Catalog=DATABASE;User ID=sa;Password=P-000000;MultipleActiveResultSets=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force -UseDatabaseNames
+
+Data Source=.;Initial Catalog=DATABASE;User ID=sa;Password=00000000
+
+"ConnectionStrings": {
+    "SqlServerConnection": "Data Source=.;Initial Catalog=DATABASE;User ID=sa;Password=00000000;MultipleActiveResultSets=True;"
+  }
+
+
+
+
+curl -X GET "https://localhost:44359/api/Admins" -H  "accept: text/plain" -H  "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxMjM0NTYiLCJpYXQiOiIxNjM5OTg0MTkwIiwibmJmIjoiMTYzOTk4NDE5MCIsImV4cCI6IjE2Mzk5ODUxOTAiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiIyMDIxLzEyLzIwIDE1OjI2OjMwIiwiaXNzIjoiQ29ubmVjdGlvblN0cmluZ3M6Snd0U2V0dGluZzpJc3N1ZXIiLCJhdWQiOiJDb25uZWN0aW9uU3RyaW5nczpKd3RTZXR0aW5nOkF1ZGllbmNlIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4ifQ.v4Ik06jHIypzQSZDPQwSHVK4IeUsSN5LmpGMOLiD6k0"
