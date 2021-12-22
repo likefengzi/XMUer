@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using XMUer.Authorization;
 using XMUer.Models;
+using XMUer.Utility;
 
 namespace XMUer.Controllers
 {
@@ -14,12 +19,99 @@ namespace XMUer.Controllers
     public class AlbumsController : ControllerBase
     {
         private readonly DATABASEContext _context;
+        int code;
+        String msg;
+        Boolean result;
+        int total;
 
         public AlbumsController(DATABASEContext context)
         {
             _context = context;
         }
-
+        //查看相册
+        [HttpGet("Album")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> GetAlbum()
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            List<Album> albums;
+            try
+            {
+                albums = await _context.Albums.Where(p => p.UserId == id).ToListAsync();
+            }
+            catch
+            {
+                albums = null;
+            }
+            if (albums == null || albums.Count == 0)
+            {
+                code = 404;
+                result = false;
+                msg = "没有相册";
+                return APIResultHelper.Error(code, msg, result);
+            }
+            else
+            {
+                code = 200;
+                result = true;
+                msg = "获取成功";
+                return APIResultHelper.Success(code, msg, result, albums, albums.Count());
+            }
+        }
+        //创建相册
+        [HttpPost("Album")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> PostAlbum(string name)
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            Album album=new Album();
+            string time = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            album.Id = time;
+            album.Name = name;
+            album.UserId = id;
+            album.GmtCreate = DateTime.Now;
+            album.GmtModify = DateTime.Now;
+            _context.Albums.Add(album);
+            await _context.SaveChangesAsync();
+            code = 200;
+            result = true;
+            msg = "创建成功";
+            return APIResultHelper.Success(code, msg, result);
+            
+        }
+        //删除相册
+        [HttpDelete("Album")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> DeleteAlbum(string id)
+        {
+            Album album;
+            try
+            {
+                album = await _context.Albums.FindAsync(id);
+            }
+            catch
+            {
+                album = null;
+            }
+            if (album == null)
+            {
+                code = 404;
+                result = false;
+                msg = "相册不存在";
+                return APIResultHelper.Error(code, msg, result);
+            }
+            else
+            {
+                _context.Remove(album);
+                await _context.SaveChangesAsync();
+                code = 200;
+                result = true;
+                msg = "删除成功";
+                return APIResultHelper.Success(code, msg, result);
+            }
+        }
         // GET: api/Albums
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Album>>> GetAlbums()
@@ -97,6 +189,7 @@ namespace XMUer.Controllers
             return CreatedAtAction("GetAlbum", new { id = album.Id }, album);
         }
 
+        /*
         // DELETE: api/Albums/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAlbum(string id)
@@ -112,7 +205,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
         private bool AlbumExists(string id)
         {
             return _context.Albums.Any(e => e.Id == id);

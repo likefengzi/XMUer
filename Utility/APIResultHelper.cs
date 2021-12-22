@@ -30,34 +30,58 @@ namespace XMUer.Utility
 
         500 - Internal server error，这表示是服务器发生了错误
         */
-
-        public static APIResult Success(int code,dynamic data, string msg)
+        public static APIResult Success(int code, string msg, bool result)
         {
             return new APIResult
             {
                 Code = code,
-                Data = data,
                 Msg = msg,
+                Result = result,
+                Data = null,
                 Total = 0
             };
         }
-        public static APIResult Success(int code,dynamic data, int total, string msg)
+        public static APIResult Success(int code, string msg, bool result,dynamic data)
         {
             return new APIResult
             {
                 Code = code,
-                Data = data,
                 Msg = msg,
+                Result = result,
+                Data = data,
+                Total = 0
+            };
+        }
+        public static APIResult Success(int code, string msg, bool result, dynamic data, int total)
+        {
+            return new APIResult
+            {
+                Code = code,
+                Msg = msg,
+                Result = result,
+                Data = data,
                 Total = total
             };
         }
-        public static APIResult Error(int code,string msg)
+        public static APIResult Error(int code,string msg, bool result)
         {
             return new APIResult
             {
                 Code = code,
-                Data = null,
                 Msg = msg,
+                Result = result,
+                Data = null,
+                Total = 0
+            };
+        }
+        public static APIResult Error(int code, string msg, bool result,dynamic data)
+        {
+            return new APIResult
+            {
+                Code = code,
+                Msg = msg,
+                Result = result,
+                Data = data,
                 Total = 0
             };
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using XMUer.Authorization;
 using XMUer.Models;
@@ -16,6 +17,10 @@ namespace XMUer.Controllers
     public class AdminsController : ControllerBase
     {
         private readonly DATABASEContext _context;
+        int code;
+        String msg;
+        Boolean result;
+        int total;
 
         public AdminsController(DATABASEContext context)
         {
@@ -28,15 +33,12 @@ namespace XMUer.Controllers
             String jwtstr;
             String token;
             var admin = await _context.Admins.FindAsync(id);
-            int code;
-            Boolean result;
-            String msg;
             if (admin == null)
             {
                 code = 404;
                 result = false;
                 msg = "用户不存在";
-                return APIResultHelper.Success(code, new { result }, msg);
+                return APIResultHelper.Error(code, msg, result);
             }
             password = MD5Helper.MD5Encryption(password);
             if (password == admin.Password)
@@ -47,15 +49,44 @@ namespace XMUer.Controllers
                 TokenModel tokenModel = new TokenModel { Uid = id, Role = "Admin" };
                 jwtstr = JwtHelper.IssueJwt(tokenModel);
                 token = jwtstr;
-                return APIResultHelper.Success(code, new { token, result }, msg);
+                return APIResultHelper.Success(code, msg, result, new { token});
             }
             else
             {
                 code = 405;
                 result = false;
                 msg = "密码错误";
-                return APIResultHelper.Success(code, new { result }, msg);
+                return APIResultHelper.Error(code, msg, result);
             }
+        }
+        //通过审核
+        [HttpPut("Verify")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<APIResult>> PassVerify(string id)
+        {
+
+            var user = await _context.Users.FindAsync(id);
+            user.BeenAudit = 1;
+            code = 200;
+            result = true;
+            msg = "审核成功";
+            return APIResultHelper.Success(code, msg, result);
+
+        }
+        //通过审核
+        [HttpDelete("Verify")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<APIResult>> DeleteVerify(string id)
+        {
+
+            var user = await _context.Users.FindAsync(id);
+            _context.Remove(user);
+            await _context.SaveChangesAsync();
+            code = 200;
+            result = true;
+            msg = "删除成功";
+            return APIResultHelper.Success(code, msg, result);
+
         }
         // GET: api/Admins
         [HttpGet]

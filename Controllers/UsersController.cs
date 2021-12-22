@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,12 +20,25 @@ namespace XMUer.Controllers
     {
         private readonly DATABASEContext _context;
         int code;
-        Boolean result;
         String msg;
+        Boolean result;
+        int total;
 
         public UsersController(DATABASEContext context)
         {
             _context = context;
+        }
+        //用户Id
+        [HttpGet("GetUserId")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> GetUserId()
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            code = 200;
+            result = true;
+            msg = "获取成功";
+            return APIResultHelper.Success(code, msg, result, new { id });
         }
         //用户登录
         [HttpGet("Login")]
@@ -32,31 +46,38 @@ namespace XMUer.Controllers
         {
             String jwtstr;
             String token;
-            var admin = await _context.Users.FindAsync(id);
-            if (admin == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 code = 404;
                 result = false;
                 msg = "用户不存在";
-                return APIResultHelper.Success(code, new { result }, msg);
+                return APIResultHelper.Error(code, msg, result);
             }
             password = MD5Helper.MD5Encryption(password);
-            if (password == admin.Password)
+            if (password == user.Password)
             {
+                if (user.BeenAudit == 0)
+                {
+                    code = 405;
+                    result = false;
+                    msg = "未审核";
+                    return APIResultHelper.Error(code, msg, result);
+                }
                 code = 200;
                 result = true;
                 msg = "登录成功";
                 TokenModel tokenModel = new TokenModel { Uid = id, Role = "User" };
                 jwtstr = JwtHelper.IssueJwt(tokenModel);
                 token = jwtstr;
-                return APIResultHelper.Success(code, new { token, result }, msg);
+                return APIResultHelper.Success(code, msg, result, new { token });
             }
             else
             {
                 code = 405;
                 result = false;
                 msg = "密码错误";
-                return APIResultHelper.Success(code, new { result }, msg);
+                return APIResultHelper.Error(code, msg, result);
             }
         }
         //用户注册
@@ -79,18 +100,19 @@ namespace XMUer.Controllers
                 code = 403;
                 result = false;
                 msg = "用户已存在";
-                return APIResultHelper.Success(code, new { result }, msg);
+                return APIResultHelper.Error(code, msg, result);
             }
             password = MD5Helper.MD5Encryption(password);
             user = new User();
             user.Id = id;
             user.Password = password;
+            user.BeenAudit = 0;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             code = 200;
             result = true;
             msg = "注册成功";
-            return APIResultHelper.Success(code, new { result }, msg);
+            return APIResultHelper.Success(code, msg, result);
 
         }
         //获取头像
@@ -115,12 +137,12 @@ namespace XMUer.Controllers
                 code = 403;
                 result = false;
                 msg = "头像不存在";
-                return APIResultHelper.Success(code, new { result }, msg);
+                return APIResultHelper.Error(code, msg, result);
             }
             code = 200;
             result = true;
             msg = "获取成功";
-            return APIResultHelper.Success(code, new { result, avatar.Path }, msg);
+            return APIResultHelper.Success(code, msg, result, new { avatar.Path });
 
         }
         //上传头像
@@ -177,14 +199,14 @@ namespace XMUer.Controllers
                         _context.Avatars.Add(temp);
                         await _context.SaveChangesAsync();
                     }
-                    return APIResultHelper.Success(code, new { result, url }, msg);
+                    return APIResultHelper.Success(code, msg, result, new { url });
                 }
                 else
                 {
                     code = 404;
                     result = false;
                     msg = "上传失败";
-                    return APIResultHelper.Success(code, new { result }, msg);
+                    return APIResultHelper.Error(code, msg, result);
                 }
             }
             catch (Exception ex)
@@ -192,10 +214,62 @@ namespace XMUer.Controllers
                 code = 404;
                 result = false;
                 msg = "上传失败";
-                return APIResultHelper.Success(code, new { result, ex.Message }, msg);
+                return APIResultHelper.Error(code, msg, result, new { ex.Message });
             }
 
         }
+        //获取信息
+        [HttpGet("UserInfo")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> GetUserInfo()
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            var user = await _context.Users.FindAsync(id);
+
+
+            code = 200;
+            result = true;
+            msg = "获取成功";
+            User info = user;
+            info.Password = null;
+            return APIResultHelper.Success(code, msg, result, info);
+
+        }
+        //上传信息
+        [HttpPut("UserInfo")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> SetUserInfo(string name, string email, string sexual, string birthday, string hometown, string college, string dept, string major, string grade, string music, string hobby, string book, string movie, string game, string anime, string sport)
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            var user = await _context.Users.FindAsync(id);
+            user.Name = name;
+            user.Email = email;
+            user.Sexual = Convert.ToByte(sexual);
+            DateTimeFormatInfo dtFormat = new DateTimeFormatInfo();
+            dtFormat.ShortDatePattern = "yyyy-MM-dd";
+            user.Birthday = Convert.ToDateTime(birthday, dtFormat);
+            user.Hometown = hometown;
+            user.College = college;
+            user.Dept = dept;
+            user.Major = major;
+            user.Grade = grade;
+            user.Fmusic = music;
+            user.Fhobby = hobby;
+            user.Fbook = book;
+            user.Fmovie = movie;
+            user.Fgame = game;
+            user.Fanime = anime;
+            user.Fsport = sport;
+            await _context.SaveChangesAsync();
+            code = 200;
+            result = true;
+            msg = "修改成功";
+            return APIResultHelper.Success(code, msg, result);
+
+        }
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
