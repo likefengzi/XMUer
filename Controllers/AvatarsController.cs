@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using XMUer.Authorization;
 using XMUer.Models;
+using XMUer.Utility;
 
 namespace XMUer.Controllers
 {
@@ -14,12 +19,117 @@ namespace XMUer.Controllers
     public class AvatarsController : ControllerBase
     {
         private readonly DATABASEContext _context;
+        int code;
+        String msg;
+        Boolean result;
 
         public AvatarsController(DATABASEContext context)
         {
             _context = context;
         }
+        //获取头像
+        [HttpGet("Avatar")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> GetAvatar()
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            Avatar avatar;
+            try
+            {
+                avatar = await _context.Avatars.Where(p => p.UserId == id).FirstAsync();
+            }
+            catch
+            {
+                avatar = null;
+            }
 
+            if (avatar == null)
+            {
+                code = 403;
+                result = false;
+                msg = "头像不存在";
+                return APIResultHelper.Error(code, msg, result);
+            }
+            code = 200;
+            result = true;
+            msg = "获取成功";
+            return APIResultHelper.Success(code, msg, result, new { avatar.Path });
+
+        }
+        //上传头像
+        [HttpPost("Avatar")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> PostAvatar([FromForm] FileUpload File)
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            Avatar avatar;
+            try
+            {
+                avatar = await _context.Avatars.Where(p => p.UserId == id).FirstAsync();
+            }
+            catch
+            {
+                avatar = null;
+            }
+
+            string time = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            string path = "http://122.9.8.178/";
+            string extensionname = Path.GetExtension(File.files.Name);
+            string url = path + time + extensionname;
+            try
+            {
+                if (File.files.Length > 0)
+                {
+                    FileUploadHelper.FileUploadToLinux(url, File);
+
+                    code = 200;
+                    result = true;
+                    msg = "上传成功";
+                    if (avatar == null)
+                    {
+                        Avatar temp = new Avatar();
+                        temp.Id = time;
+                        temp.UserId = id;
+                        temp.Path = url;
+                        temp.GmtCreate = DateTime.Now;
+                        temp.GmtModify = DateTime.Now;
+                        _context.Avatars.Add(temp);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _context.Avatars.Remove(avatar);
+                        await _context.SaveChangesAsync();
+                        Avatar temp = new Avatar();
+                        temp.Id = time;
+                        temp.UserId = id;
+                        temp.Path = url;
+                        temp.GmtCreate = DateTime.Now;
+                        temp.GmtModify = DateTime.Now;
+                        _context.Avatars.Add(temp);
+                        await _context.SaveChangesAsync();
+                    }
+                    return APIResultHelper.Success(code, msg, result, new { url });
+                }
+                else
+                {
+                    code = 404;
+                    result = false;
+                    msg = "上传失败";
+                    return APIResultHelper.Error(code, msg, result);
+                }
+            }
+            catch (Exception ex)
+            {
+                code = 404;
+                result = false;
+                msg = "上传失败";
+                return APIResultHelper.Error(code, msg, result, new { ex.Message });
+            }
+
+        }
         // GET: api/Avatars
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Avatar>>> GetAvatars()

@@ -20,7 +20,6 @@ namespace XMUer.Controllers
         int code;
         String msg;
         Boolean result;
-        int total;
 
         public AdminsController(DATABASEContext context)
         {
@@ -73,7 +72,7 @@ namespace XMUer.Controllers
             return APIResultHelper.Success(code, msg, result);
 
         }
-        //通过审核
+        //删除用户
         [HttpDelete("Verify")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<APIResult>> DeleteVerify(string id)
@@ -86,6 +85,18 @@ namespace XMUer.Controllers
             result = true;
             msg = "删除成功";
             return APIResultHelper.Success(code, msg, result);
+
+        }
+        //账号列表
+        [HttpGet("GetUserList")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<APIResult>> GetUserList()
+        {
+            List<User> users = await _context.Users.ToListAsync();
+            code = 200;
+            result = true;
+            msg = "获取成功";
+            return APIResultHelper.Success(code, msg, result,users,users.Count);
 
         }
         // GET: api/Admins

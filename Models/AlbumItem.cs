@@ -14,6 +14,6 @@ namespace XMUer.Models
         public DateTime GmtCreate { get; set; }
         public DateTime GmtModify { get; set; }
 
-
+        public virtual Album Album { get; set; }
     }
 }

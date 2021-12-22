@@ -69,13 +69,21 @@ namespace XMUer.Models
 
                 entity.Property(e => e.Name).HasMaxLength(256);
 
+                entity.Property(e => e.Path)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.UserId)
                     .IsRequired()
                     .HasMaxLength(14)
                     .IsUnicode(false)
                     .IsFixedLength(true);
 
-
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Albums)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Album_User");
             });
 
             modelBuilder.Entity<AlbumItem>(entity =>
@@ -99,7 +107,11 @@ namespace XMUer.Models
 
                 entity.Property(e => e.Path).HasMaxLength(256);
 
-
+                entity.HasOne(d => d.Album)
+                    .WithMany(p => p.AlbumItems)
+                    .HasForeignKey(d => d.AlbumId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AlbumItem_Album");
             });
 
             modelBuilder.Entity<Avatar>(entity =>
@@ -122,7 +134,11 @@ namespace XMUer.Models
                     .IsUnicode(false)
                     .IsFixedLength(true);
 
-
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Avatars)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Avatar_User");
             });
 
             modelBuilder.Entity<Comment>(entity =>
@@ -148,7 +164,17 @@ namespace XMUer.Models
                     .IsUnicode(false)
                     .IsFixedLength(true);
 
+                entity.HasOne(d => d.News)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.NewsId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Comment__NewsId__2BFE89A6");
 
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Comment__UserId__2B0A656D");
             });
 
             modelBuilder.Entity<Friend>(entity =>
@@ -170,7 +196,17 @@ namespace XMUer.Models
 
                 entity.Property(e => e.GmtCreate).HasColumnType("datetime");
 
+                entity.HasOne(d => d.My)
+                    .WithMany(p => p.FriendMies)
+                    .HasForeignKey(d => d.MyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Friend__MyId__681373AD");
 
+                entity.HasOne(d => d.Other)
+                    .WithMany(p => p.FriendOthers)
+                    .HasForeignKey(d => d.OtherId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Friend__OtherId__690797E6");
             });
 
             modelBuilder.Entity<FriendApply>(entity =>
@@ -192,7 +228,17 @@ namespace XMUer.Models
 
                 entity.Property(e => e.GmtCreate).HasColumnType("datetime");
 
+                entity.HasOne(d => d.From)
+                    .WithMany(p => p.FriendApplyFroms)
+                    .HasForeignKey(d => d.FromId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__FriendApp__FromI__634EBE90");
 
+                entity.HasOne(d => d.To)
+                    .WithMany(p => p.FriendApplyTos)
+                    .HasForeignKey(d => d.ToId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__FriendAppl__ToId__6442E2C9");
             });
 
             modelBuilder.Entity<Like>(entity =>
@@ -211,7 +257,17 @@ namespace XMUer.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.HasOne(d => d.News)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.NewsId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Like__NewsId__503BEA1C");
 
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Likes)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Like__UserId__4F47C5E3");
             });
 
             modelBuilder.Entity<News>(entity =>
@@ -226,6 +282,12 @@ namespace XMUer.Models
 
                 entity.Property(e => e.GmtModify).HasColumnType("datetime");
 
+                entity.Property(e => e.IsPublic).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Path)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.SharedNewsId).HasDefaultValueSql("((-1))");
 
                 entity.Property(e => e.UserId)
@@ -234,6 +296,11 @@ namespace XMUer.Models
                     .IsUnicode(false)
                     .IsFixedLength(true);
 
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.News)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__News__UserId__1AD3FDA4");
             });
 
             modelBuilder.Entity<User>(entity =>

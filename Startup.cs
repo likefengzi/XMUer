@@ -37,8 +37,6 @@ namespace XMUer
         {
             
             var connStr = ConfigHelper.GetConnectionString("ConnectionStrings");
-            Console.WriteLine(connStr);
-            Console.WriteLine("*****");
             var sqlConnection = Configuration.GetConnectionString("SqlServerConnection");
             services.AddDbContext<DATABASEContext>(option => option.UseSqlServer(sqlConnection));
             services.AddMvc();

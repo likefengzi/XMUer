@@ -13,6 +13,7 @@ namespace XMUer.Models
         public string NewsId { get; set; }
         public DateTime GmtCreate { get; set; }
 
-
+        public virtual News News { get; set; }
+        public virtual User User { get; set; }
     }
 }

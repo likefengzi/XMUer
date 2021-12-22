@@ -22,7 +22,6 @@ namespace XMUer.Controllers
         int code;
         String msg;
         Boolean result;
-        int total;
 
         public AlbumsController(DATABASEContext context)
         {
@@ -44,7 +43,7 @@ namespace XMUer.Controllers
             {
                 albums = null;
             }
-            if (albums == null || albums.Count == 0)
+            if (albums == null)
             {
                 code = 404;
                 result = false;

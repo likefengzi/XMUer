@@ -16,12 +16,13 @@ namespace XMUer.Models
         public string Id { get; set; }
         public string UserId { get; set; }
         public string Body { get; set; }
-        public byte IsPublic { get; set; }
+        public string Path { get; set; }
+        public byte? IsPublic { get; set; }
         public long? SharedNewsId { get; set; }
         public DateTime GmtCreate { get; set; }
         public DateTime GmtModify { get; set; }
 
-
+        public virtual User User { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Like> Likes { get; set; }
     }

@@ -11,6 +11,7 @@ namespace XMUer.Models
         public string OtherId { get; set; }
         public DateTime GmtCreate { get; set; }
 
-
+        public virtual User My { get; set; }
+        public virtual User Other { get; set; }
     }
 }

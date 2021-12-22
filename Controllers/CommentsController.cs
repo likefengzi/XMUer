@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using XMUer.Authorization;
 using XMUer.Models;
+using XMUer.Utility;
 
 namespace XMUer.Controllers
 {
@@ -14,12 +19,35 @@ namespace XMUer.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly DATABASEContext _context;
+        int code;
+        String msg;
+        Boolean result;
 
         public CommentsController(DATABASEContext context)
         {
             _context = context;
         }
-
+        //评论
+        [HttpPost("Comment")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> PostComment(string id,string content)
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var userid = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            Comment comment = new Comment();
+            string time = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            comment.Id = time;
+            comment.UserId = userid;
+            comment.Body = content;
+            comment.NewsId = id;
+            comment.GmtCreate = DateTime.Now;
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+            code = 200;
+            result = true;
+            msg = "点赞成功";
+            return APIResultHelper.Success(code, msg, result);
+        }
         // GET: api/Comments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()

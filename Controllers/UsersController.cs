@@ -22,7 +22,6 @@ namespace XMUer.Controllers
         int code;
         String msg;
         Boolean result;
-        int total;
 
         public UsersController(DATABASEContext context)
         {
@@ -115,109 +114,7 @@ namespace XMUer.Controllers
             return APIResultHelper.Success(code, msg, result);
 
         }
-        //获取头像
-        [HttpGet("Avatar")]
-        [Authorize(Roles = "User")]
-        public async Task<ActionResult<APIResult>> GetAvatar()
-        {
-            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
-            Avatar avatar;
-            try
-            {
-                avatar = await _context.Avatars.Where(p => p.UserId == id).FirstAsync();
-            }
-            catch
-            {
-                avatar = null;
-            }
 
-            if (avatar == null)
-            {
-                code = 403;
-                result = false;
-                msg = "头像不存在";
-                return APIResultHelper.Error(code, msg, result);
-            }
-            code = 200;
-            result = true;
-            msg = "获取成功";
-            return APIResultHelper.Success(code, msg, result, new { avatar.Path });
-
-        }
-        //上传头像
-        [HttpPost("Avatar")]
-        [Authorize(Roles = "User")]
-        public async Task<ActionResult<APIResult>> PostAvatar([FromForm] FileUpload File)
-        {
-            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
-            Avatar avatar;
-            try
-            {
-                avatar = await _context.Avatars.Where(p => p.UserId == id).FirstAsync();
-            }
-            catch
-            {
-                avatar = null;
-            }
-
-            string time = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-            string path = "http://122.9.8.178/";
-            string extensionname = Path.GetExtension(File.files.Name);
-            string url = path + time + extensionname;
-            try
-            {
-                if (File.files.Length > 0)
-                {
-                    FileUploadHelper.FileUploadToLinux(url, File);
-
-                    code = 200;
-                    result = true;
-                    msg = "上传成功";
-                    if (avatar == null)
-                    {
-                        Avatar temp = new Avatar();
-                        temp.Id = time;
-                        temp.UserId = id;
-                        temp.Path = url;
-                        temp.GmtCreate = DateTime.Now;
-                        temp.GmtModify = DateTime.Now;
-                        _context.Avatars.Add(temp);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        _context.Avatars.Remove(avatar);
-                        await _context.SaveChangesAsync();
-                        Avatar temp = new Avatar();
-                        temp.Id = time;
-                        temp.UserId = id;
-                        temp.Path = url;
-                        temp.GmtCreate = DateTime.Now;
-                        temp.GmtModify = DateTime.Now;
-                        _context.Avatars.Add(temp);
-                        await _context.SaveChangesAsync();
-                    }
-                    return APIResultHelper.Success(code, msg, result, new { url });
-                }
-                else
-                {
-                    code = 404;
-                    result = false;
-                    msg = "上传失败";
-                    return APIResultHelper.Error(code, msg, result);
-                }
-            }
-            catch (Exception ex)
-            {
-                code = 404;
-                result = false;
-                msg = "上传失败";
-                return APIResultHelper.Error(code, msg, result, new { ex.Message });
-            }
-
-        }
         //获取信息
         [HttpGet("UserInfo")]
         [Authorize(Roles = "User")]
@@ -267,6 +164,20 @@ namespace XMUer.Controllers
             result = true;
             msg = "修改成功";
             return APIResultHelper.Success(code, msg, result);
+
+        }
+        //获取用户动态
+        [HttpGet("GetUserNews")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> GetUserNews()
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var id = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            List<News> news = await _context.News.Where(p => p.UserId == id).ToListAsync();
+            code = 200;
+            result = true;
+            msg = "获取成功";
+            return APIResultHelper.Success(code, msg, result, news,news.Count);
 
         }
 

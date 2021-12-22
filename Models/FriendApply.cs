@@ -11,6 +11,7 @@ namespace XMUer.Models
         public string ToId { get; set; }
         public DateTime GmtCreate { get; set; }
 
-
+        public virtual User From { get; set; }
+        public virtual User To { get; set; }
     }
 }

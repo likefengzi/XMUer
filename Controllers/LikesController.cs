@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using XMUer.Authorization;
 using XMUer.Models;
+using XMUer.Utility;
 
 namespace XMUer.Controllers
 {
@@ -14,6 +19,9 @@ namespace XMUer.Controllers
     public class LikesController : ControllerBase
     {
         private readonly DATABASEContext _context;
+        int code;
+        String msg;
+        Boolean result;
 
         public LikesController(DATABASEContext context)
         {
@@ -26,7 +34,36 @@ namespace XMUer.Controllers
         {
             return await _context.Likes.ToListAsync();
         }
-
+        //点赞
+        [HttpPost("PostThumb")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> PostThumb(string id)
+        {
+            var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var userid = JwtHelper.SerializeJwt(tokenHeader).Uid;
+            Like like = new Like();
+            like.UserId = userid;
+            like.NewsId = id;
+            _context.Likes.Add(like);
+            await _context.SaveChangesAsync();
+            code = 200;
+            result = true;
+            msg = "点赞成功";
+            return APIResultHelper.Success(code, msg, result);
+        }
+        //取消点赞
+        [HttpDelete("DeleteThumb")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> DeleteThumb(string id)
+        {
+            var like = await _context.Likes.FindAsync(id);
+            _context.Likes.Remove(like);
+            await _context.SaveChangesAsync();
+            code = 200;
+            result = true;
+            msg = "取消点赞";
+            return APIResultHelper.Success(code, msg, result);
+        }
         // GET: api/Likes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Like>> GetLike(string id)

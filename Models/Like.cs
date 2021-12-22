@@ -10,6 +10,7 @@ namespace XMUer.Models
         public string UserId { get; set; }
         public string NewsId { get; set; }
 
-
+        public virtual News News { get; set; }
+        public virtual User User { get; set; }
     }
 }
