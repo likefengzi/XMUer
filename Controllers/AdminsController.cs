@@ -99,13 +99,15 @@ namespace XMUer.Controllers
             return APIResultHelper.Success(code, msg, result,users,users.Count);
 
         }
+        /*
         // GET: api/Admins
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
         {
             return await _context.Admins.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/Admins/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Admin>> GetAdmin(string id)
@@ -119,7 +121,8 @@ namespace XMUer.Controllers
 
             return admin;
         }
-
+        */
+        /*
         // PUT: api/Admins/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -150,7 +153,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Admins
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -175,7 +179,8 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetAdmin", new { id = admin.Id }, admin);
         }
-
+        */
+        /*
         // DELETE: api/Admins/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAdmin(string id)
@@ -191,6 +196,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
+        */
 
         private bool AdminExists(string id)
         {

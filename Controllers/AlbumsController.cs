@@ -111,13 +111,15 @@ namespace XMUer.Controllers
                 return APIResultHelper.Success(code, msg, result);
             }
         }
+        /*
         // GET: api/Albums
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Album>>> GetAlbums()
         {
             return await _context.Albums.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/Albums/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Album>> GetAlbum(string id)
@@ -131,7 +133,8 @@ namespace XMUer.Controllers
 
             return album;
         }
-
+        */
+        /*
         // PUT: api/Albums/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -162,7 +165,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Albums
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -187,7 +191,7 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetAlbum", new { id = album.Id }, album);
         }
-
+        */
         /*
         // DELETE: api/Albums/5
         [HttpDelete("{id}")]

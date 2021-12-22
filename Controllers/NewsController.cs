@@ -112,13 +112,15 @@ namespace XMUer.Controllers
             msg = "点赞成功";
             return APIResultHelper.Success(code, msg, result, comments, total);
         }
+        /*
         // GET: api/News
         [HttpGet]
         public async Task<ActionResult<IEnumerable<News>>> GetNews()
         {
             return await _context.News.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/News/5
         [HttpGet("{id}")]
         public async Task<ActionResult<News>> GetNews(string id)
@@ -132,7 +134,8 @@ namespace XMUer.Controllers
 
             return news;
         }
-
+        */
+        /*
         // PUT: api/News/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -163,7 +166,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/News
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -188,6 +192,7 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetNews", new { id = news.Id }, news);
         }
+        */
         /*
         // DELETE: api/News/5
         [HttpDelete("{id}")]

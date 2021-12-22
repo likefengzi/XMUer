@@ -78,13 +78,15 @@ namespace XMUer.Controllers
             msg = "搜索成功";
             return APIResultHelper.Success(code, msg, result, users, users.Count);
         }
+        /*
         // GET: api/Friends
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Friend>>> GetFriends()
         {
             return await _context.Friends.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/Friends/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Friend>> GetFriend(string id)
@@ -98,7 +100,8 @@ namespace XMUer.Controllers
 
             return friend;
         }
-
+        */
+        /*
         // PUT: api/Friends/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -129,7 +132,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Friends
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -154,6 +158,7 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetFriend", new { id = friend.MyId }, friend);
         }
+        */
         /*
         // DELETE: api/Friends/5
         [HttpDelete("{id}")]

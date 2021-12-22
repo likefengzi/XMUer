@@ -48,13 +48,15 @@ namespace XMUer.Controllers
             msg = "点赞成功";
             return APIResultHelper.Success(code, msg, result);
         }
+        /*
         // GET: api/Comments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
             return await _context.Comments.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(string id)
@@ -68,7 +70,8 @@ namespace XMUer.Controllers
 
             return comment;
         }
-
+        */
+        /*
         // PUT: api/Comments/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -99,7 +102,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Comments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -124,7 +128,8 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
         }
-
+        */
+        /*
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(string id)
@@ -140,7 +145,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
         private bool CommentExists(string id)
         {
             return _context.Comments.Any(e => e.Id == id);

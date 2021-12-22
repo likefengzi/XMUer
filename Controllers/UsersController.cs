@@ -180,14 +180,27 @@ namespace XMUer.Controllers
             return APIResultHelper.Success(code, msg, result, news,news.Count);
 
         }
+        //获取好友动态
+        [HttpGet("GetFriendNews")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult<APIResult>> GetFriendNews(string id)
+        {
+            List<News> news = await _context.News.Where(p => p.UserId == id).ToListAsync();
+            code = 200;
+            result = true;
+            msg = "获取成功";
+            return APIResultHelper.Success(code, msg, result, news, news.Count);
 
+        }
+        /*
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
@@ -201,7 +214,8 @@ namespace XMUer.Controllers
 
             return user;
         }
-
+        */
+        /*
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -232,7 +246,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -257,7 +272,8 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
-
+        */
+        /*
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
@@ -273,7 +289,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);

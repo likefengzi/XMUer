@@ -47,9 +47,9 @@ namespace XMUer.Controllers
             return APIResultHelper.Success(code, msg, result);
         }
         //通过申请
-        [HttpPut("PassApply")]
+        [HttpPut("ApplyFriend")]
         [Authorize(Roles = "User")]
-        public async Task<ActionResult<APIResult>> PassApply(string id)
+        public async Task<ActionResult<APIResult>> ApplyPass(string id)
         {
             var tokenHeader = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var userid = JwtHelper.SerializeJwt(tokenHeader).Uid;
@@ -74,7 +74,7 @@ namespace XMUer.Controllers
             return APIResultHelper.Success(code, msg, result);
         }
         //拒绝申请
-        [HttpPut("DeleteApply")]
+        [HttpDelete("ApplyFriend")]
         [Authorize(Roles = "User")]
         public async Task<ActionResult<APIResult>> DeleteApply(string id)
         {
@@ -88,13 +88,15 @@ namespace XMUer.Controllers
             msg = "添加成功";
             return APIResultHelper.Success(code, msg, result);
         }
+        /*
         // GET: api/FriendApplies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FriendApply>>> GetFriendApplies()
         {
             return await _context.FriendApplies.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/FriendApplies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<FriendApply>> GetFriendApply(string id)
@@ -108,7 +110,8 @@ namespace XMUer.Controllers
 
             return friendApply;
         }
-
+        */
+        /*
         // PUT: api/FriendApplies/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -139,7 +142,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/FriendApplies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -164,7 +168,8 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetFriendApply", new { id = friendApply.FromId }, friendApply);
         }
-
+        */
+        /*
         // DELETE: api/FriendApplies/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFriendApply(string id)
@@ -180,7 +185,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
         private bool FriendApplyExists(string id)
         {
             return _context.FriendApplies.Any(e => e.FromId == id);

@@ -117,13 +117,14 @@ namespace XMUer.Controllers
             msg = "删除成功";
             return APIResultHelper.Success(code, msg, result);
         }
-
+        /*
         // GET: api/AlbumItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AlbumItem>>> GetAlbumItems()
         {
             return await _context.AlbumItems.ToListAsync();
         }
+        */
         /*
         // GET: api/AlbumItems/5
         [HttpGet("{id}")]

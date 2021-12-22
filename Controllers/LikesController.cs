@@ -28,12 +28,7 @@ namespace XMUer.Controllers
             _context = context;
         }
 
-        // GET: api/Likes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Like>>> GetLikes()
-        {
-            return await _context.Likes.ToListAsync();
-        }
+        
         //点赞
         [HttpPost("PostThumb")]
         [Authorize(Roles = "User")]
@@ -64,6 +59,15 @@ namespace XMUer.Controllers
             msg = "取消点赞";
             return APIResultHelper.Success(code, msg, result);
         }
+        /*
+        // GET: api/Likes
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Like>>> GetLikes()
+        {
+            return await _context.Likes.ToListAsync();
+        }
+        */
+        /*
         // GET: api/Likes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Like>> GetLike(string id)
@@ -77,7 +81,8 @@ namespace XMUer.Controllers
 
             return like;
         }
-
+        */
+        /*
         // PUT: api/Likes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -108,7 +113,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Likes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -133,7 +139,8 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetLike", new { id = like.UserId }, like);
         }
-
+        */
+        /*
         // DELETE: api/Likes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLike(string id)
@@ -149,7 +156,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
         private bool LikeExists(string id)
         {
             return _context.Likes.Any(e => e.UserId == id);

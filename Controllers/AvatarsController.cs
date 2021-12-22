@@ -130,13 +130,15 @@ namespace XMUer.Controllers
             }
 
         }
+        /*
         // GET: api/Avatars
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Avatar>>> GetAvatars()
         {
             return await _context.Avatars.ToListAsync();
         }
-
+        */
+        /*
         // GET: api/Avatars/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Avatar>> GetAvatar(string id)
@@ -150,7 +152,8 @@ namespace XMUer.Controllers
 
             return avatar;
         }
-
+        */
+        /*
         // PUT: api/Avatars/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -181,7 +184,8 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
+        /*
         // POST: api/Avatars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -206,7 +210,8 @@ namespace XMUer.Controllers
 
             return CreatedAtAction("GetAvatar", new { id = avatar.Id }, avatar);
         }
-
+        */
+        /*
         // DELETE: api/Avatars/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAvatar(string id)
@@ -222,7 +227,7 @@ namespace XMUer.Controllers
 
             return NoContent();
         }
-
+        */
         private bool AvatarExists(string id)
         {
             return _context.Avatars.Any(e => e.Id == id);
